@@ -1,3 +1,11 @@
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useTransform,
+} from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import scrollDown from "./assets/arrow_circle_down.svg?url";
 import hero1 from "./assets/hero-1.jpg?url";
 import hero2 from "./assets/hero-2.jpg?url";
@@ -37,25 +45,131 @@ function Colors() {
 }
 
 function LoadScreen() {
+  const loadingDuration = 1.5;
+  const progress = useMotionValue(0);
+  const clipProgress = useMotionValue(0);
+  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const pRef = useRef<HTMLParagraphElement>(null);
+  const percentRef = useRef<HTMLParagraphElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const displayedPercent = useTransform(progress, (value) => Math.round(value));
+  const progressWidth = useTransform(progress, (value) => `${value}%`);
+
+  const [displayedPercentValue, setDisplayedPercentValue] = useState(0);
+
+  const h1X = useTransform(progress, (value) => {
+    if (!h1Ref.current || !containerRef.current) return 0;
+
+    const h1Rect = h1Ref.current.getBoundingClientRect();
+    const style = window.getComputedStyle(containerRef.current);
+    const paddingX =
+      parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+
+    const distance = containerRef.current.clientWidth - h1Rect.width - paddingX;
+    return (value / 100) * distance;
+  });
+
+  const pX = useTransform(progress, (value) => {
+    if (!pRef.current || !containerRef.current) return 0;
+
+    const pRect = pRef.current.getBoundingClientRect();
+    const style = window.getComputedStyle(containerRef.current);
+    const paddingX =
+      parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+
+    const distance = containerRef.current.clientWidth - pRect.width - paddingX;
+    return (value / 100) * distance;
+  });
+
+  const percentX = useTransform(progress, (value) => {
+    if (!percentRef.current || !containerRef.current) return 0;
+
+    const percentRect = percentRef.current.getBoundingClientRect();
+    const style = window.getComputedStyle(containerRef.current);
+    const paddingX =
+      parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+
+    const distance =
+      containerRef.current.clientWidth - percentRect.width - paddingX;
+    return (value / 100) * distance;
+  });
+
+  useMotionValueEvent(displayedPercent, "change", (latest) => {
+    setDisplayedPercentValue(latest);
+  });
+
+  // trigger animation
+  useEffect(() => {
+    const progressAnimation = animate(progress, 100, {
+      duration: loadingDuration,
+      ease: "linear",
+    });
+
+    const clipAnimation = animate(clipProgress, 100, {
+      duration: 0.5,
+      ease: "easeInOut",
+      delay: loadingDuration + 1,
+    });
+
+    return () => {
+      progressAnimation.stop();
+      clipAnimation.stop();
+    };
+  }, [progress, clipProgress]);
+
+  const clipPath = useTransform(
+    clipProgress,
+    (value) => `inset(0 ${value}% 0 0)`,
+  );
+
   return (
-    <div className="bg-dark-blue relative flex min-h-screen flex-col p-8">
+    <motion.div
+      ref={containerRef}
+      className="bg-dark-blue relative flex min-h-screen flex-col p-8"
+      style={{ clipPath }}
+    >
       <div className="text-white">
-        <h1 className="font-audiowide text-8xl">doubleU</h1>
-        <p className="font-orbitron mt-4 text-xl">Explore & Build Cool Sites</p>
+        <motion.h1
+          ref={h1Ref}
+          layout
+          className="font-audiowide w-fit text-8xl"
+          style={{ x: h1X }}
+        >
+          doubleU
+        </motion.h1>
+
+        <motion.p
+          ref={pRef}
+          className="font-orbitron mt-4 w-fit text-xl"
+          style={{ x: pX }}
+        >
+          Explore & Build Cool Sites
+        </motion.p>
       </div>
 
       <div className="mt-auto">
-        <p className="font-orbitron text-2xl text-white">
-          <span className="text-5xl">00</span>
-          <span className="text-xl">%</span>
-        </p>
+        <div className="ml-auto">
+          <motion.p
+            ref={percentRef}
+            className="font-orbitron w-fit text-2xl text-white"
+            style={{ x: percentX }}
+          >
+            <span className="text-5xl">
+              {String(displayedPercentValue).padStart(2, "0")}
+            </span>
+            <span className="text-xl">%</span>
+          </motion.p>
+        </div>
 
         <div className="relative mt-4 h-px">
           <div className="absolute inset-0 bg-white/50"></div>
-          <div className="bg-secondary absolute inset-0 w-1/2"></div>
+          <motion.div
+            className="bg-secondary absolute inset-0"
+            style={{ width: progressWidth }}
+          />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
