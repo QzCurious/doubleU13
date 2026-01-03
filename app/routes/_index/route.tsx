@@ -1,8 +1,16 @@
+import hero1 from "./assets/hero-1.jpg?url";
+import hero2 from "./assets/hero-2.jpg?url";
+import hero3 from "./assets/hero-3.jpg?url";
+import hero4 from "./assets/hero-4.jpg?url";
+import hero5 from "./assets/hero-5.jpg?url";
+import hero6 from "./assets/hero-6.jpg?url";
+
 export default function Route() {
   return (
     <div>
       <Colors />
       <LoadScreen />
+      <Hero />
     </div>
   );
 }
@@ -45,6 +53,52 @@ function LoadScreen() {
           <div className="absolute inset-0 bg-white/50"></div>
           <div className="bg-secondary absolute inset-0 w-1/2"></div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <div className="bg-primary relative grid min-h-screen place-items-center overflow-hidden">
+      <div className="absolute inset-0">
+        <img
+          src={hero1}
+          alt="Hero 1"
+          className="absolute top-[10%] left-[5%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+        />
+        <img
+          src={hero2}
+          alt="Hero 2"
+          className="absolute top-[15%] right-[8%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+        />
+        <img
+          src={hero3}
+          alt="Hero 3"
+          className="absolute top-[50%] right-[3%] w-64 -translate-y-1/2 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+        />
+        <img
+          src={hero4}
+          alt="Hero 4"
+          className="absolute right-[10%] bottom-[15%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+        />
+        <img
+          src={hero5}
+          alt="Hero 5"
+          className="absolute bottom-[10%] left-[8%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+        />
+        <img
+          src={hero6}
+          alt="Hero 6"
+          className="absolute top-[45%] left-[2%] w-64 -translate-y-1/2 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+        />
+      </div>
+
+      <div className="relative z-10 text-center text-white">
+        <h2 className="text-5xl font-medium">探索＆創造動態網頁</h2>
+        <p className="mt-4 text-7xl font-semibold">
+          Explore & Build <br /> Web Animation
+        </p>
       </div>
     </div>
   );
