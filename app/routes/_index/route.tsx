@@ -15,7 +15,7 @@ import hero4 from "./assets/hero-4.jpg?url";
 import hero5 from "./assets/hero-5.jpg?url";
 import hero6 from "./assets/hero-6.jpg?url";
 
-const enableLoadScreen = false;
+const enableLoadScreen = true;
 
 export default function Route() {
   const [isLoadScreenComplete, setIsLoadScreenComplete] =
