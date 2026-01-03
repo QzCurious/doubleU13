@@ -22,6 +22,17 @@ export default function Route() {
     useState(!enableLoadScreen);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (!isLoadScreenComplete) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isLoadScreenComplete]);
+
   return (
     <div ref={containerRef} className="relative">
       {/* <Colors /> */}
