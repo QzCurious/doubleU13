@@ -1,3 +1,4 @@
+import scrollDown from "./assets/arrow_circle_down.svg?url";
 import hero1 from "./assets/hero-1.jpg?url";
 import hero2 from "./assets/hero-2.jpg?url";
 import hero3 from "./assets/hero-3.jpg?url";
@@ -61,6 +62,7 @@ function LoadScreen() {
 function Hero() {
   return (
     <div className="bg-primary relative grid min-h-screen place-items-center overflow-hidden">
+      {/* images */}
       <div className="absolute inset-0">
         <img
           src={hero1}
@@ -101,6 +103,15 @@ function Hero() {
         <p className="font-orbitron mt-4 text-7xl font-semibold">
           Explore & Build <br /> Web Animation
         </p>
+      </div>
+
+      <div className="absolute right-0 bottom-4 left-0">
+        <div className="flex items-center justify-center gap-2">
+          <p className="font-orbitron text-center text-sm text-white">
+            scroll down
+          </p>
+          <img src={scrollDown} alt="scroll down" />
+        </div>
       </div>
     </div>
   );
