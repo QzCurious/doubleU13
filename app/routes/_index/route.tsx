@@ -3,6 +3,7 @@ import {
   motion,
   useMotionValue,
   useMotionValueEvent,
+  useScroll,
   useTransform,
 } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -14,16 +15,23 @@ import hero4 from "./assets/hero-4.jpg?url";
 import hero5 from "./assets/hero-5.jpg?url";
 import hero6 from "./assets/hero-6.jpg?url";
 
+const enableLoadScreen = false;
+
 export default function Route() {
-  const [isLoadScreenComplete, setIsLoadScreenComplete] = useState(false);
+  const [isLoadScreenComplete, setIsLoadScreenComplete] =
+    useState(!enableLoadScreen);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div>
+    <div ref={containerRef}>
       {/* <Colors /> */}
 
-      <LoadScreen onComplete={setIsLoadScreenComplete} />
+      {enableLoadScreen && <LoadScreen onComplete={setIsLoadScreenComplete} />}
 
-      <Hero isLoadScreenComplete={isLoadScreenComplete} />
+      <Hero
+        isLoadScreenComplete={isLoadScreenComplete}
+        containerRef={containerRef}
+      />
     </div>
   );
 }
@@ -187,7 +195,23 @@ function LoadScreen({ onComplete }: { onComplete: (value: boolean) => void }) {
   );
 }
 
-function Hero({ isLoadScreenComplete }: { isLoadScreenComplete: boolean }) {
+function Hero({
+  isLoadScreenComplete,
+  containerRef,
+}: {
+  isLoadScreenComplete: boolean;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 5]);
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const spacerHeight = useTransform(scrollYProgress, [0, 1], [0, 200], {
+    clamp: false,
+  });
+
   const images = [
     {
       src: hero1,
@@ -234,60 +258,72 @@ function Hero({ isLoadScreenComplete }: { isLoadScreenComplete: boolean }) {
   ];
 
   return (
-    <div className="bg-primary relative grid min-h-screen place-items-center overflow-hidden">
-      {/* images */}
-      <div className="absolute inset-0">
-        {images.map((image, index) => (
-          <motion.img
-            key={index}
-            src={image.src}
-            alt={image.alt}
-            className="absolute w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
-            initial={{
-              left: "50%",
-              top: "50%",
-              x: "-50%",
-              y: "-50%",
-            }}
-            animate={
-              isLoadScreenComplete
-                ? {
-                    ...image.finalPosition,
-                    ...image.finalTransform,
-                  }
-                : {
-                    left: "50%",
-                    top: "50%",
-                    x: "-50%",
-                    y: "-50%",
-                  }
-            }
-            transition={{
-              duration: 0.8,
-              ease: "easeOut",
-              delay: image.delay,
-            }}
-          />
-        ))}
-      </div>
+    <>
+      <motion.div className="bg-primary sticky top-0 min-h-screen overflow-hidden">
+        <motion.div
+          className="absolute inset-0 grid size-full place-items-center"
+          style={{ scale }}
+        >
+          {/* images */}
+          <div className="absolute inset-0">
+            {images.map((image, index) => (
+              <motion.img
+                key={index}
+                src={image.src}
+                alt={image.alt}
+                className="absolute w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+                initial={{
+                  left: "50%",
+                  top: "50%",
+                  x: "-50%",
+                  y: "-50%",
+                }}
+                animate={
+                  isLoadScreenComplete
+                    ? {
+                        ...image.finalPosition,
+                        ...image.finalTransform,
+                      }
+                    : {
+                        left: "50%",
+                        top: "50%",
+                        x: "-50%",
+                        y: "-50%",
+                      }
+                }
+                transition={{
+                  duration: 0.8,
+                  ease: "easeOut",
+                  delay: image.delay,
+                }}
+              />
+            ))}
+          </div>
 
-      <div className="relative z-10 text-center text-white">
-        <h2 className="font-noto-sans-tc text-5xl font-medium">
-          探索＆創造動態網頁
-        </h2>
-        <p className="font-orbitron mt-4 text-7xl font-semibold">
-          Explore & Build <br /> Web Animation
-        </p>
-      </div>
+          <div className="relative z-10 text-center text-white">
+            <h2 className="font-noto-sans-tc text-5xl font-medium">
+              探索＆創造動態網頁
+            </h2>
+            <motion.div ref={spacerRef} style={{ height: spacerHeight }}>
+              {/* spacer */}
+            </motion.div>
+            <p className="font-orbitron mt-4 text-7xl font-semibold">
+              Explore & Build <br /> Web Animation
+            </p>
+          </div>
 
-      <div className="absolute right-0 bottom-4 left-0">
-        <div className="flex items-center justify-center gap-2">
-          <p className="font-orbitron text-center text-sm text-white">
-            scroll down
-          </p>
-          <img src={scrollDown} alt="scroll down" />
-        </div>
-      </div>
-    </div>
+          <div className="absolute right-0 bottom-4 left-0">
+            <div className="flex items-center justify-center gap-2">
+              <p className="font-orbitron text-center text-sm text-white">
+                scroll down
+              </p>
+              <img src={scrollDown} alt="scroll down" />
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      <div className="h-[200vh]" />
+    </>
   );
 }
