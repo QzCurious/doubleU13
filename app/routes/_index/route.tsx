@@ -23,7 +23,7 @@ export default function Route() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="relative">
       {/* <Colors /> */}
 
       {enableLoadScreen && <LoadScreen onComplete={setIsLoadScreenComplete} />}
@@ -32,6 +32,8 @@ export default function Route() {
         isLoadScreenComplete={isLoadScreenComplete}
         containerRef={containerRef}
       />
+
+      <WhatsNext containerRef={containerRef} />
     </div>
   );
 }
@@ -207,6 +209,8 @@ function Hero({
     offset: ["start start", "end start"],
   });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 5]);
+  const blur = useTransform(scrollYProgress, [0, 1], [0, 20]);
+  const filter = useTransform(blur, (v) => `blur(${v}px)`);
   const spacerRef = useRef<HTMLDivElement>(null);
   const spacerHeight = useTransform(scrollYProgress, [0, 1], [0, 200], {
     clamp: false,
@@ -259,7 +263,10 @@ function Hero({
 
   return (
     <>
-      <motion.div className="bg-primary sticky top-0 min-h-screen overflow-hidden">
+      <motion.div
+        className="bg-primary sticky top-0 min-h-screen overflow-hidden"
+        style={{ filter }}
+      >
         <motion.div
           className="absolute inset-0 grid size-full place-items-center"
           style={{ scale }}
@@ -325,5 +332,34 @@ function Hero({
 
       <div className="h-[200vh]" />
     </>
+  );
+}
+
+function WhatsNext({
+  containerRef,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const scale = useTransform(scrollYProgress, [0, 1], [0.5, 1]);
+
+  return (
+    <motion.section
+      className="fixed inset-0 h-screen border bg-gray-400"
+      style={{ opacity }}
+    >
+      <div className="absolute inset-0 grid place-items-center">
+        <motion.h2
+          className="text-secondary font-orbitron text-center text-[9rem] leading-none font-medium"
+          style={{ scale }}
+        >
+          Whats <br /> Coming Next
+        </motion.h2>
+      </div>
+    </motion.section>
   );
 }
