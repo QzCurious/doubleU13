@@ -15,13 +15,15 @@ import hero5 from "./assets/hero-5.jpg?url";
 import hero6 from "./assets/hero-6.jpg?url";
 
 export default function Route() {
+  const [isLoadScreenComplete, setIsLoadScreenComplete] = useState(false);
+
   return (
     <div>
       {/* <Colors /> */}
 
-      <LoadScreen />
+      <LoadScreen onComplete={setIsLoadScreenComplete} />
 
-      <Hero />
+      <Hero isLoadScreenComplete={isLoadScreenComplete} />
     </div>
   );
 }
@@ -46,7 +48,7 @@ function Colors() {
   );
 }
 
-function LoadScreen() {
+function LoadScreen({ onComplete }: { onComplete: (value: boolean) => void }) {
   const loadingDuration = 1.5;
   const progress = useMotionValue(0);
   const clipProgress = useMotionValue(0);
@@ -104,6 +106,7 @@ function LoadScreen() {
   useMotionValueEvent(clipProgress, "change", (latest) => {
     if (latest >= 100) {
       setIsComplete(true);
+      onComplete(true);
     }
   });
 
@@ -184,41 +187,88 @@ function LoadScreen() {
   );
 }
 
-function Hero() {
+function Hero({ isLoadScreenComplete }: { isLoadScreenComplete: boolean }) {
+  const images = [
+    {
+      src: hero1,
+      alt: "Hero 1",
+      finalPosition: { top: "10%", left: "5%" },
+      finalTransform: { x: 0, y: 0 },
+      delay: 0,
+    },
+    {
+      src: hero2,
+      alt: "Hero 2",
+      finalPosition: { top: "15%", right: "8%" },
+      finalTransform: { x: 0, y: 0 },
+      delay: 0.2,
+    },
+    {
+      src: hero3,
+      alt: "Hero 3",
+      finalPosition: { top: "50%", right: "3%" },
+      finalTransform: { x: 0, y: "-50%" },
+      delay: 0.4,
+    },
+    {
+      src: hero4,
+      alt: "Hero 4",
+      finalPosition: { bottom: "15%", right: "10%" },
+      finalTransform: { x: 0, y: 0 },
+      delay: 0.6,
+    },
+    {
+      src: hero5,
+      alt: "Hero 5",
+      finalPosition: { bottom: "10%", left: "8%" },
+      finalTransform: { x: 0, y: 0 },
+      delay: 0.8,
+    },
+    {
+      src: hero6,
+      alt: "Hero 6",
+      finalPosition: { top: "50%", left: "2%" },
+      finalTransform: { x: 0, y: "-50%" },
+      delay: 1.0,
+    },
+  ];
+
   return (
     <div className="bg-primary relative grid min-h-screen place-items-center overflow-hidden">
       {/* images */}
       <div className="absolute inset-0">
-        <img
-          src={hero1}
-          alt="Hero 1"
-          className="absolute top-[10%] left-[5%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
-        />
-        <img
-          src={hero2}
-          alt="Hero 2"
-          className="absolute top-[15%] right-[8%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
-        />
-        <img
-          src={hero3}
-          alt="Hero 3"
-          className="absolute top-[50%] right-[3%] w-64 -translate-y-1/2 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
-        />
-        <img
-          src={hero4}
-          alt="Hero 4"
-          className="absolute right-[10%] bottom-[15%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
-        />
-        <img
-          src={hero5}
-          alt="Hero 5"
-          className="absolute bottom-[10%] left-[8%] w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
-        />
-        <img
-          src={hero6}
-          alt="Hero 6"
-          className="absolute top-[45%] left-[2%] w-64 -translate-y-1/2 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
-        />
+        {images.map((image, index) => (
+          <motion.img
+            key={index}
+            src={image.src}
+            alt={image.alt}
+            className="absolute w-64 rounded-lg opacity-80 shadow-2xl transition-opacity hover:opacity-100"
+            initial={{
+              left: "50%",
+              top: "50%",
+              x: "-50%",
+              y: "-50%",
+            }}
+            animate={
+              isLoadScreenComplete
+                ? {
+                    ...image.finalPosition,
+                    ...image.finalTransform,
+                  }
+                : {
+                    left: "50%",
+                    top: "50%",
+                    x: "-50%",
+                    y: "-50%",
+                  }
+            }
+            transition={{
+              duration: 0.8,
+              ease: "easeOut",
+              delay: image.delay,
+            }}
+          />
+        ))}
       </div>
 
       <div className="relative z-10 text-center text-white">
