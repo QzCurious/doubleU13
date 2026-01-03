@@ -17,8 +17,10 @@ import hero6 from "./assets/hero-6.jpg?url";
 export default function Route() {
   return (
     <div>
-      <Colors />
+      {/* <Colors /> */}
+
       <LoadScreen />
+
       <Hero />
     </div>
   );
@@ -56,6 +58,7 @@ function LoadScreen() {
   const progressWidth = useTransform(progress, (value) => `${value}%`);
 
   const [displayedPercentValue, setDisplayedPercentValue] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
 
   const h1X = useTransform(progress, (value) => {
     if (!h1Ref.current || !containerRef.current) return 0;
@@ -98,6 +101,12 @@ function LoadScreen() {
     setDisplayedPercentValue(latest);
   });
 
+  useMotionValueEvent(clipProgress, "change", (latest) => {
+    if (latest >= 100) {
+      setIsComplete(true);
+    }
+  });
+
   // trigger animation
   useEffect(() => {
     const progressAnimation = animate(progress, 100, {
@@ -122,10 +131,12 @@ function LoadScreen() {
     (value) => `inset(0 ${value}% 0 0)`,
   );
 
+  if (isComplete) return null;
+
   return (
     <motion.div
       ref={containerRef}
-      className="bg-dark-blue relative flex min-h-screen flex-col p-8"
+      className="bg-dark-blue fixed inset-0 z-50 flex min-h-screen flex-col p-8"
       style={{ clipPath }}
     >
       <div className="text-white">
