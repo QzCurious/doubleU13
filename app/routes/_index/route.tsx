@@ -39,12 +39,12 @@ function LoadScreen() {
   return (
     <div className="bg-dark-blue relative flex min-h-screen flex-col p-8">
       <div className="text-white">
-        <h1 className="text-8xl">doubleU</h1>
-        <p className="mt-4 text-xl">Explore & Build Cool Sites</p>
+        <h1 className="font-audiowide text-8xl">doubleU</h1>
+        <p className="font-orbitron mt-4 text-xl">Explore & Build Cool Sites</p>
       </div>
 
       <div className="mt-auto">
-        <p className="text-2xl text-white">
+        <p className="font-orbitron text-2xl text-white">
           <span className="text-5xl">00</span>
           <span className="text-xl">%</span>
         </p>
@@ -95,8 +95,10 @@ function Hero() {
       </div>
 
       <div className="relative z-10 text-center text-white">
-        <h2 className="text-5xl font-medium">探索＆創造動態網頁</h2>
-        <p className="mt-4 text-7xl font-semibold">
+        <h2 className="font-noto-sans-tc text-5xl font-medium">
+          探索＆創造動態網頁
+        </h2>
+        <p className="font-orbitron mt-4 text-7xl font-semibold">
           Explore & Build <br /> Web Animation
         </p>
       </div>
